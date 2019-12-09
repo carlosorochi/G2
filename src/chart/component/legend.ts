@@ -1,5 +1,5 @@
 import { deepMix, each, find, get, head, isBoolean, last, map, uniq } from '@antv/util';
-import { COMPONENT_TYPE, DIRECTION, LAYER } from '../../constant';
+import { COMPONENT_MAX_VIEW_PERCENTAGE, COMPONENT_TYPE, DIRECTION, LAYER } from '../../constant';
 import { Attribute, CategoryLegend, ContinuousLegend, IGroup, Scale, Tick } from '../../dependents';
 import Geometry from '../../geometry/base';
 import { BBox } from '../../util/bbox';
@@ -249,11 +249,13 @@ export default class Legend extends Component<Option> {
     // the default marker style
     const themeMarker = get(this.view.getTheme(), ['components', 'legend', direction, 'marker']);
     const userMarker = get(legendOption, 'marker');
+    const layout = getLegendLayout(direction);
 
     const baseCfg = {
       container,
-      layout: getLegendLayout(direction),
+      layout,
       items: getLegendItems(this.view, geometry, attr, themeMarker, userMarker),
+      ...this.getCategoryLegendSizeCfg(layout),
     };
 
     const component = new CategoryLegend(this.getLegendCfg(baseCfg, legendOption, direction));
@@ -278,5 +280,18 @@ export default class Legend extends Component<Option> {
     const themeObject = get(this.view.getTheme(), ['components', 'legend', direction], {});
 
     return deepMix({}, themeObject, baseCfg, legendOption);
+  }
+
+  private getCategoryLegendSizeCfg(layout: 'horizontal' | 'vertical') {
+    const { width, height } = this.view.viewBBox;
+    return layout === 'vertical'
+      ? {
+          maxWidth: width * COMPONENT_MAX_VIEW_PERCENTAGE,
+          maxHeight: height,
+        }
+      : {
+          maxWidth: width,
+          maxHeight: height * COMPONENT_MAX_VIEW_PERCENTAGE,
+        };
   }
 }

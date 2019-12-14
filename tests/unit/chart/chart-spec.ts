@@ -1,6 +1,5 @@
 import { Chart, getEngine, LAYER } from '../../../src/';
 import { VIEW_LIFE_CIRCLE } from '../../../src/constant';
-import { ICanvas, IGroup } from '../../../src/dependents';
 import { CITY_SALE } from '../../util/data';
 import { createDiv } from '../../util/dom';
 
@@ -104,9 +103,9 @@ describe('Chart', () => {
     expect(chart.scales).toEqual({});
     expect(!!chart.getCoordinate()).toBe(false);
 
-    expect(chart.getLayer(LAYER.BG).get('children').length).toBe(0);
+    expect(chart.getLayer(LAYER.BG).get('children').length).toBe(3);
     expect(chart.getLayer(LAYER.MID).get('children').length).toBe(1);
-    expect(chart.getLayer(LAYER.FORE).get('children').length).toBe(1);
+    expect(chart.getLayer(LAYER.FORE).get('children').length).toBe(3);
   });
 
   it('destroy', () => {
